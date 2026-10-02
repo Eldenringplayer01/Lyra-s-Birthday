@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Lyra — Royal Dance & Realm Companion</title>
+    <!-- Google Fonts for High-End Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cinzel: ['"Cinzel Decorative"', 'serif'],
+                        cormorant: ['"Cormorant Garamond"', 'serif'],
+                        handwriting: ['"Great Vibes"', 'cursive'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            /* Theme 1: Tsaritsa / Snezhnaya (Frost Royal) */
+            --bg-gradient: radial-gradient(circle at 50% 20%, #10203d 0%, #060b17 100%);
+            --accent-primary: #8ce1ff;
+            --accent-secondary: #4a9eff;
+            --accent-glow: rgba(140, 225, 255, 0.4);
+            --glass-bg: rgba(12, 25, 48, 0.55);
+            --glass-border: rgba(140, 225, 255, 0.25);
+            --text-title: #e0f5ff;
+            --text-body: #b8d9f0;
+            --card-hover-border: rgba(140, 225, 255, 0.6);
+            --particle-color: #a6ebff;
+            --realm-title: "ZAPOLYARNY SANCTUARY";
+            --realm-sub: "Dedicated to Lyra • Under Tsaritsa's Frost Grace";
+        }
+
+        .theme-cyrene {
+            /* Theme 2: Cyrene / Elysia (Crystal Blossom) */
+            --bg-gradient: radial-gradient(circle at 50% 20%, #3a152d 0%, #140510 100%);
+            --accent-primary: #ffb3de;
+            --accent-secondary: #ff66b3;
+            --accent-glow: rgba(255, 179, 222, 0.45);
+            --glass-bg: rgba(45, 12, 33, 0.55);
+            --glass-border: rgba(255, 179, 222, 0.3);
+            --text-title: #fff0f7;
+            --text-body: #f7cbe3;
+            --card-hover-border: rgba(255, 179, 222, 0.7);
+            --particle-color: #ffcae8;
+            --realm-title: "ELYSIAN CRYSTAL GARDEN";
+            --realm-sub: "Dedicated to Lyra • Under Cyrene's Eternal Blossom";
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-body);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            transition: background 0.8s ease, color 0.5s ease;
+            overflow-x: hidden;
+        }
+
+        canvas#particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 32px 0 rgba(0, 0, 0, 0.45);
+            transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
+        }
+
+        .glass-panel:hover {
+            border-color: var(--card-hover-border);
+            box-shadow: 0 12px 40px 0 var(--accent-glow);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 15px var(--accent-glow), 0 0 30px var(--accent-primary);
+        }
+
+        .accent-btn {
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+            color: #050a14;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        .accent-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px var(--accent-primary);
+        }
+
+        .accent-btn:active {
+            transform: translateY(1px);
+        }
+
+        .accent-outline-btn {
+            border: 1px solid var(--glass-border);
+            color: var(--text-title);
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .accent-outline-btn:hover {
+            border-color: var(--accent-primary);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-primary);
+        }
+
+        /* Modal Overlay */
+        .modal-blur {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.85;
+                transform: scale(1.02);
+            }
+        }
+    </style>
+</head>
+
+<body class="relative min-h-screen text-slate-100 pb-16">
+
+    <!-- Background Canvas for Interactive Particles -->
+    <canvas id="particleCanvas"></canvas>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+
+        <!-- Top Controls & Realm Switcher -->
+        <header class="flex flex-wrap justify-between items-center gap-4 mb-8 glass-panel p-4 rounded-2xl">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 text-xl border border-white/20 shadow-inner"
+                    id="realmIcon">
+                    ❄️
+                </div>
+                <div>
+                    <h1 class="font-cinzel text-lg sm:text-xl font-bold tracking-wider text-glow" id="realmTitle">
+                        ZAPOLYARNY SANCTUARY</h1>
+                    <p class="text-xs opacity-70 font-cormorant italic" id="realmSub">Dedicated to Lyra • Under
+                        Tsaritsa's Frost Grace</p>
+                </div>
+            </div>
+
+            <!-- Controls Group -->
+            <div class="flex items-center gap-3 flex-wrap">
+                <!-- Realm / Theme Switcher -->
+                <button onclick="toggleTheme()"
+                    class="accent-outline-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2">
+                    <span id="themeToggleIcon">🌸</span>
+                    <span id="themeToggleLabel">Switch to Cyrene Mode</span>
+                </button>
+
+                <!-- Background Customizer Toggle -->
+                <button onclick="toggleBgModal()" class="accent-outline-btn px-3 py-2 rounded-xl text-xs sm:text-sm"
+                    title="Customize Background">
+                    🎨 Theme BG
+                </button>
+
+                <!-- Open Birthday Vault -->
+                <button onclick="openLetterModal()"
+                    class="accent-btn px-4 py-2 rounded-xl text-xs sm:text-sm flex items-center gap-2">
+                    <span>📜</span>
+                    <span>Birthday Letter</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Hero Inspiration / Perchance-style Oracle Section -->
+        <section class="glass-panel rounded-3xl p-6 sm:p-8 mb-8 text-center relative overflow-hidden">
+            <div class="max-w-3xl mx-auto">
+                <span class="text-xs font-semibold tracking-widest uppercase opacity-60 font-cinzel">The Archon's
+                    Inspiration for Lyra</span>
+                <blockquote id="oracleQuote"
+                    class="font-cormorant text-2xl sm:text-3xl italic my-4 min-h-[80px] flex items-center justify-center text-glow">
+                    "Through every step and turn, the stage bends to the grace of your spirit."
+                </blockquote>
+                <div class="flex justify-center items-center gap-3">
+                    <button onclick="generateOracleQuote()"
+                        class="accent-outline-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-medium flex items-center gap-2">
+                        <span>✨</span>
+                        <span>Receive Daily Dance Oracle</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN DASHBOARD GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- LEFT COLUMN: Dance Practice Suite (2/3 width on large screens) -->
+            <div class="lg:col-span-2 space-y-8">
+
+                <!-- Advanced Dance Rehearsal Suite -->
+                <div class="glass-panel rounded-3xl p-6 sm:p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="font-cinzel text-xl font-bold flex items-center gap-2">
+                                <span>🩰</span>
+                                <span>Dance Rehearsal Suite</span>
+                            </h2>
+                            <p class="text-xs opacity-75 mt-0.5">Custom timer, metronome & practice cadence</p>
+                        </div>
+                        <div class="text-xs px-3 py-1 rounded-full border border-white/20 bg-white/5"
+                            id="timerStatusLabel">
+                            Ready
+                        </div>
+                    </div>
+
+                    <!-- Preset Selector Tabs -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
+                        <button onclick="setTimerPreset(300, 'Warm-up Stretch')"
+                            class="accent-outline-btn py-2 rounded-xl text-xs">🧘 5m Warmup</button>
+                        <button onclick="setTimerPreset(900, 'Choreography Practice')"
+                            class="accent-outline-btn py-2 rounded-xl text-xs">💃 15m Choreo</button>
+                        <button onclick="setTimerPreset(1800, 'Full Dance Rehearsal')"
+                            class="accent-outline-btn py-2 rounded-xl text-xs">🎭 30m Rehearsal</button>
+                        <button onclick="setTimerPreset(600, 'Cool-down & Stretch')"
+                            class="accent-outline-btn py-2 rounded-xl text-xs">❄️ 10m Cool-down</button>
+                    </div>
+
+                    <!-- Timer Clock Display & Controls -->
+                    <div class="text-center bg-black/20 rounded-2xl p-6 border border-white/10 mb-6">
+                        <div id="timerModeTitle" class="text-xs uppercase tracking-widest opacity-60 mb-1">Custom
+                            Practice</div>
+                        <div id="timerDisplay"
+                            class="font-cinzel text-5xl sm:text-7xl font-bold tracking-tight my-2 text-glow">
+                            15:00
+                        </div>
+
+                        <!-- Manual Time Adjuster -->
+                        <div class="flex justify-center items-center gap-3 my-3 text-xs opacity-80">
+                            <button onclick="adjustTimer(-60)"
+                                class="hover:text-white px-2 py-1 bg-white/5 rounded">-1m</button>
+                            <button onclick="adjustTimer(-10)"
+                                class="hover:text-white px-2 py-1 bg-white/5 rounded">-10s</button>
+                            <span>Custom Time</span>
+                            <button onclick="adjustTimer(10)"
+                                class="hover:text-white px-2 py-1 bg-white/5 rounded">+10s</button>
+                            <button onclick="adjustTimer(60)"
+                                class="hover:text-white px-2 py-1 bg-white/5 rounded">+1m</button>
+                        </div>
+
+                        <div class="flex justify-center gap-4 mt-4">
+                            <button id="startTimerBtn" onclick="toggleTimer()"
+                                class="accent-btn px-8 py-3 rounded-2xl text-sm font-bold flex items-center gap-2">
+                                <span id="timerIcon">▶</span>
+                                <span id="timerBtnText">Start Practice</span>
+                            </button>
+                            <button onclick="resetTimer()" class="accent-outline-btn px-6 py-3 rounded-2xl text-sm">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Metronome & Tap Tempo Tool -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-white/10">
+                        <!-- Metronome -->
+                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-semibold">🎵 Practice Metronome</span>
+                                <span id="bpmValueDisplay" class="text-xs font-mono font-bold text-sky-300">120
+                                    BPM</span>
+                            </div>
+                            <input type="range" id="bpmSlider" min="40" max="208" value="120"
+                                oninput="updateBpm(this.value)" class="w-full accent-sky-400 mb-3">
+                            <div class="flex justify-between items-center">
+                                <button id="metronomeToggleBtn" onclick="toggleMetronome()"
+                                    class="accent-outline-btn px-4 py-1.5 rounded-lg text-xs">
+                                    Start Metronome
+                                </button>
+                                <span class="text-[10px] opacity-60">Tick audio generated client-side</span>
+                            </div>
+                        </div>
+
+                        <!-- Tap Tempo BPM Finder -->
+                        <div class="bg-white/5 p-4 rounded-2xl border border-white/10 text-center">
+                            <div class="text-xs font-semibold mb-1">🥁 Tap Tempo Counter</div>
+                            <p class="text-[11px] opacity-70 mb-2">Tap button along with music rhythm</p>
+                            <button onclick="registerTapTempo()"
+                                class="w-full accent-outline-btn py-2.5 rounded-xl text-xs font-bold active:scale-95 transition-transform">
+                                👏 Tap Here for Rhythm
+                            </button>
+                            <div class="mt-2 text-xs font-mono">Tapped Pace: <span id="tappedBpmDisplay"
+                                    class="font-bold text-sky-300">-- BPM</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dance Goals & Journal Notes (Local Storage) -->
+                <div class="glass-panel rounded-3xl p-6 sm:p-8">
+                    <h2 class="font-cinzel text-xl font-bold mb-2 flex items-center gap-2">
+                        <span>📖</span>
+                        <span>Lyra's Dance Journal & Rehearsal Log</span>
+                    </h2>
+                    <p class="text-xs opacity-75 mb-6">Track your choreography notes, stretches, and daily reflections.
+                        (Saved locally in your browser!)</p>
+
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="journalInput"
+                            placeholder="Add choreography goal or reflection (e.g., 'Master spin combo at 120 BPM')..."
+                            class="flex-1 bg-black/30 border border-white/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-sky-400 transition-colors placeholder:text-white/30">
+                        <button onclick="addJournalEntry()" class="accent-btn px-5 py-2.5 rounded-xl text-sm">
+                            Save Note
+                        </button>
+                    </div>
+
+                    <div id="journalList" class="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+                        <!-- Entries rendered via JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Music Player & Visualizer (1/3 width) -->
+            <div class="space-y-8">
+
+                <!-- Music Player & Audio Visualizer Canvas -->
+                <div class="glass-panel rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
+                    <div>
+                        <h2 class="font-cinzel text-xl font-bold mb-1 flex items-center gap-2">
+                            <span>🎼</span>
+                            <span>Realm Music Player</span>
+                        </h2>
+                        <p class="text-xs opacity-75 mb-4">Ballet, ambient & custom uploaded practice tracks</p>
+
+                        <!-- Audio Visualizer Canvas -->
+                        <div
+                            class="relative w-full h-28 bg-black/40 rounded-2xl overflow-hidden mb-4 border border-white/10 flex items-center justify-center">
+                            <canvas id="visualizerCanvas" class="w-full h-full absolute top-0 left-0"></canvas>
+                            <span id="visualizerPlaceholder"
+                                class="text-xs opacity-50 relative z-10 pointer-events-none">Play music to activate
+                                visualizer</span>
+                        </div>
+
+                        <!-- Current Track Banner -->
+                        <div class="bg-white/5 p-3 rounded-xl border border-white/10 mb-4 flex items-center gap-3">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sm pulse-slow">
+                                🎵
+                            </div>
+                            <div class="overflow-hidden flex-1">
+                                <div id="trackTitle" class="text-xs font-semibold truncate">Snowy Palace Ballet</div>
+                                <div id="trackArtist" class="text-[10px] opacity-60 truncate">Snezhnaya Ambient
+                                    Orchestral</div>
+                            </div>
+                        </div>
+
+                        <!-- Playlist Selector -->
+                        <div class="space-y-1.5 text-xs mb-4">
+                            <label class="text-[10px] uppercase font-bold tracking-wider opacity-60">Preset Rehearsal
+                                Playlist</label>
+                            <button onclick="selectPresetTrack(0)"
+                                class="w-full text-left p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 flex justify-between items-center transition-colors">
+                                <span>❄️ Winter Ballet Waltz</span>
+                                <span class="text-[10px] opacity-50">Piano</span>
+                            </button>
+                            <button onclick="selectPresetTrack(1)"
+                                class="w-full text-left p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 flex justify-between items-center transition-colors">
+                                <span>🌸 Elysian Sakura Dance</span>
+                                <span class="text-[10px] opacity-50">Orchestral</span>
+                            </button>
+                            <button onclick="selectPresetTrack(2)"
+                                class="w-full text-left p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 flex justify-between items-center transition-colors">
+                                <span>✨ Lofi Dance Stretch</span>
+                                <span class="text-[10px] opacity-50">Chill</span>
+                            </button>
+                        </div>
+
+                        <!-- Custom File Uploader -->
+                        <div class="mb-6">
+                            <label class="block text-[10px] uppercase font-bold tracking-wider opacity-60 mb-1.5">Load
+                                Your Own Practice MP3</label>
+                            <input type="file" id="audioFileInput" accept="audio/*"
+                                onchange="handleCustomAudioUpload(event)"
+                                class="text-xs w-full text-white/70 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20">
+                        </div>
+                    </div>
+
+                    <!-- Audio Controls -->
+                    <div class="pt-4 border-t border-white/10">
+                        <!-- Volume Slider -->
+                        <div class="flex items-center gap-2 mb-4 text-xs">
+                            <span>🔈</span>
+                            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7"
+                                oninput="changeVolume(this.value)" class="w-full accent-sky-400">
+                            <span>🔊</span>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button id="playPauseAudioBtn" onclick="toggleAudioPlay()"
+                                class="accent-btn w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2">
+                                <span id="playAudioIcon">▶</span>
+                                <span id="playAudioLabel">Play Music</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Realm Info Card -->
+                <div class="glass-panel rounded-3xl p-6 text-center">
+                    <div class="text-3xl mb-2">💎</div>
+                    <h3 class="font-cinzel text-sm font-bold mb-1">Crafted With Care</h3>
+                    <p class="text-xs opacity-75">No login, no external dependencies. Designed specifically for Lyra's
+                        daily dance growth & birthday inspiration.</p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- BIRTHDAY LETTER MODAL -->
+    <div id="letterModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 modal-blur hidden opacity-0 transition-opacity duration-300">
+        <div
+            class="glass-panel max-w-xl w-full rounded-3xl p-6 sm:p-8 relative border-2 border-sky-300/40 max-h-[90vh] overflow-y-auto">
+
+            <button onclick="closeLetterModal()"
+                class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-sm font-bold">✕</button>
+
+            <div class="text-center mb-6">
+                <div class="inline-block p-3 rounded-full bg-sky-500/10 border border-sky-400/30 text-3xl mb-2">
+                    👑
+                </div>
+                <h2 class="font-cinzel text-2xl font-bold text-glow">To Lyra, The Realm's Dancer</h2>
+                <p class="text-xs opacity-70 font-cormorant italic">A Royal Birthday Letter & Sincere Message</p>
+            </div>
+
+            <div
+                class="font-cormorant text-lg sm:text-xl leading-relaxed space-y-4 my-6 text-left border-y border-white/10 py-6">
+                <p class="font-semibold">Dearest Lyra,</p>
+
+                <p>I wish you a very happy birthday <3 🎂✨</p>
+
+                        <p>I know I've made you upset, and I deeply regret it. Talking with you never actually made me
+                            less amusing. You are a cute friend whom I enjoyed to tease which I regret. But fear not,
+                        </p>
+                        <p>Beacuse as your brithday and as an apology I made this web for you, of course I had tot ake
+                            help of my dearest asssitant but it is still better than nothing right?</p>
+
+                        <p>One thing I want to tell you that your energetic texts never felt upseting, I miss you, I
+                            hope to talk to you again, after all you are a good friend, a really good friend, perhaps i
+                            am being a little too dramamtic lul, but I mean it</p>
+
+                        <p class="font-handwriting text-2xl sm:text-3xl text-right pt-4 text-glow">
+                            With warmest wishes,<br>
+                            Anto
+                        </p>
+            </div>
+
+            <div class="text-center">
+                <button onclick="closeLetterModal()" class="accent-btn px-8 py-2.5 rounded-xl text-sm font-bold">
+                    Close Letter & Enjoy The Realm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BACKGROUND CUSTOMIZER MODAL -->
+    <div id="bgModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 modal-blur hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 relative">
+            <button onclick="toggleBgModal()"
+                class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm font-bold">✕</button>
+
+            <h3 class="font-cinzel text-lg font-bold mb-4">🎨 Customize Background Style</h3>
+
+            <div class="space-y-3 mb-6">
+                <button onclick="setCustomBg('default')"
+                    class="w-full text-left p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold flex justify-between">
+                    <span>✨ Dynamic Particle Realm (Default)</span>
+                    <span>Active</span>
+                </button>
+                <button onclick="setCustomBg('aurora')"
+                    class="w-full text-left p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold">
+                    🌌 Northern Frost Aurora
+                </button>
+                <button onclick="setCustomBg('sakura')"
+                    class="w-full text-left p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold">
+                    🌸 Elysian Crystal Glow
+                </button>
+            </div>
+
+            <div class="border-t border-white/10 pt-4">
+                <label class="block text-xs font-semibold mb-2">Or paste custom image URL:</label>
+                <div class="flex gap-2">
+                    <input type="text" id="bgUrlInput" placeholder="https://..."
+                        class="flex-1 bg-black/40 border border-white/20 rounded-xl px-3 py-2 text-xs focus:outline-none">
+                    <button onclick="applyCustomBgUrl()" class="accent-btn px-4 py-2 rounded-xl text-xs">Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden HTML5 Audio Element -->
+    <audio id="mainAudioPlayer" crossorigin="anonymous"></audio>
+
+    <script>
+        // State variables
+        let currentTheme = 'tsaritsa'; // 'tsaritsa' or 'cyrene'
+        let timerSeconds = 900;
+        let timerInitial = 900;
+        let timerInterval = null;
+        let isTimerRunning = false;
+
+        // Metronome State
+        let metronomeInterval = null;
+        let isMetronomeRunning = false;
+        let metronomeBpm = 120;
+        let audioCtx = null;
+
+        // Tap Tempo State
+        let tapTimes = [];
+
+        // Audio Player State
+        const audioPlayer = document.getElementById('mainAudioPlayer');
+        let isAudioPlaying = false;
+        let audioSourceNode = null;
+        let analyser = null;
+        let visualizerAnimFrame = null;
+
+        // Preset Music Tracks (Royalty Free High Quality Ambient/Ballet Audio Links)
+        const presetTracks = [
+            {
+                title: "Winter Ballet Waltz",
+                artist: "Snezhnaya Ambient Orchestral",
+                url: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=music-box-melody-113883.mp3"
+            },
+            {
+                title: "Elysian Sakura Dance",
+                artist: "Elysia Crystal Piano",
+                url: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a70513.mp3?filename=soft-piano-10781.mp3"
+            },
+            {
+                title: "Lofi Dance Stretch",
+                artist: "Chill Beats Rehearsal",
+                url: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=chill-lofi-song-8444.mp3"
+            }
+        ];
+        let currentTrackIndex = 0;
+
+        // Particle System Canvas Setup
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedY = Math.random() * 1 + 0.3;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.7 + 0.3;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.02;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+
+                if (this.y > canvas.height + 10) {
+                    this.y = -10;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.globalAlpha = this.opacity;
+
+                if (currentTheme === 'tsaritsa') {
+                    // Snowflake / Frost Crystal shape
+                    ctx.fillStyle = '#a0e0ff';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    // Sakura / Crystal Petal shape
+                    ctx.fillStyle = '#ffb3de';
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, this.size * 1.5, this.size, Math.PI / 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        // Initialize 60 Particles
+        for (let i = 0; i < 60; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        function toggleTheme() {
+            const body = document.body;
+            const realmIcon = document.getElementById('realmIcon');
+            const realmTitle = document.getElementById('realmTitle');
+            const realmSub = document.getElementById('realmSub');
+            const toggleIcon = document.getElementById('themeToggleIcon');
+            const toggleLabel = document.getElementById('themeToggleLabel');
+
+            if (currentTheme === 'tsaritsa') {
+                currentTheme = 'cyrene';
+                body.classList.add('theme-cyrene');
+                realmIcon.innerText = '🌸';
+                realmTitle.innerText = 'ELYSIAN CRYSTAL GARDEN';
+                realmSub.innerText = "Dedicated to Lyra • Under Cyrene's Eternal Blossom";
+                toggleIcon.innerText = '❄️';
+                toggleLabel.innerText = 'Switch to Tsaritsa Mode';
+            } else {
+                currentTheme = 'tsaritsa';
+                body.classList.remove('theme-cyrene');
+                realmIcon.innerText = '❄️️';
+                realmTitle.innerText = 'ZAPOLYARNY SANCTUARY';
+                realmSub.innerText = "Dedicated to Lyra • Under Tsaritsa's Frost Grace";
+                toggleIcon.innerText = '🌸';
+                toggleLabel.innerText = 'Switch to Cyrene Mode';
+            }
+        }
+
+        function formatTime(secs) {
+            const m = Math.floor(secs / 60);
+            const s = secs % 60;
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('timerDisplay').innerText = formatTime(timerSeconds);
+        }
+
+        function setTimerPreset(seconds, label) {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            timerSeconds = seconds;
+            timerInitial = seconds;
+            document.getElementById('timerModeTitle').innerText = label;
+            document.getElementById('startTimerBtn').classList.remove('bg-amber-500');
+            document.getElementById('timerIcon').innerText = '▶';
+            document.getElementById('timerBtnText').innerText = 'Start Practice';
+            document.getElementById('timerStatusLabel').innerText = 'Ready';
+            updateTimerDisplay();
+        }
+
+        function adjustTimer(delta) {
+            if (isTimerRunning) return;
+            timerSeconds = Math.max(10, timerSeconds + delta);
+            timerInitial = timerSeconds;
+            updateTimerDisplay();
+        }
+
+        function toggleTimer() {
+            const startBtn = document.getElementById('startTimerBtn');
+            const icon = document.getElementById('timerIcon');
+            const text = document.getElementById('timerBtnText');
+            const status = document.getElementById('timerStatusLabel');
+
+            if (!isTimerRunning) {
+                isTimerRunning = true;
+                icon.innerText = '⏸';
+                text.innerText = 'Pause';
+                status.innerText = 'In Session';
+
+                timerInterval = setInterval(() => {
+                    if (timerSeconds > 0) {
+                        timerSeconds--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        icon.innerText = '▶';
+                        text.innerText = 'Start Practice';
+                        status.innerText = 'Completed!';
+                        playBeepSound();
+                    }
+                }, 1000);
+            } else {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                icon.innerText = '▶';
+                text.innerText = 'Resume';
+                status.innerText = 'Paused';
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            timerSeconds = timerInitial;
+            document.getElementById('timerIcon').innerText = '▶';
+            document.getElementById('timerBtnText').innerText = 'Start Practice';
+            document.getElementById('timerStatusLabel').innerText = 'Ready';
+            updateTimerDisplay();
+        }
+
+        function updateBpm(val) {
+            metronomeBpm = parseInt(val);
+            document.getElementById('bpmValueDisplay').innerText = `${metronomeBpm} BPM`;
+            if (isMetronomeRunning) {
+                toggleMetronome(); // restart interval with new BPM
+                toggleMetronome();
+            }
+        }
+
+        function toggleMetronome() {
+            const btn = document.getElementById('metronomeToggleBtn');
+            if (isMetronomeRunning) {
+                clearInterval(metronomeInterval);
+                isMetronomeRunning = false;
+                btn.innerText = 'Start Metronome';
+            } else {
+                isMetronomeRunning = true;
+                btn.innerText = 'Stop Metronome';
+                const intervalMs = (60 / metronomeBpm) * 1000;
+                playClickSound();
+                metronomeInterval = setInterval(playClickSound, intervalMs);
+            }
+        }
+
+        function playClickSound() {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch (e) {
+                // Audio Context fallback
+            }
+        }
+
+        function playBeepSound() {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.8);
+            } catch (e) { }
+        }
+
+        function registerTapTempo() {
+            const now = Date.now();
+            tapTimes.push(now);
+            if (tapTimes.length > 4) tapTimes.shift();
+
+            if (tapTimes.length >= 2) {
+                let intervals = [];
+                for (let i = 1; i < tapTimes.length; i++) {
+                    intervals.push(tapTimes[i] - tapTimes[i - 1]);
+                }
+                const avgInterval = intervals.reduce((a, b) => a + b) / intervals.length;
+                const calculatedBpm = Math.round(60000 / avgInterval);
+                document.getElementById('tappedBpmDisplay').innerText = `${calculatedBpm} BPM`;
+                updateBpm(Math.min(208, Math.max(40, calculatedBpm)));
+            }
+        }
+
+        function loadJournal() {
+            const saved = localStorage.getItem('lyra_dance_journal');
+            const list = document.getElementById('journalList');
+            list.innerHTML = '';
+
+            const entries = saved ? JSON.parse(saved) : [
+                "Practice turn pirouette technique at 110 BPM.",
+                "Warm up shoulders before choreography rehearsal."
+            ];
+
+            entries.forEach((text, index) => {
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/10 text-xs";
+                div.innerHTML = `
+                    <span>🩰 ${text}</span>
+                    <button onclick="deleteJournalEntry(${index})" class="opacity-50 hover:opacity-100 text-rose-300">✕</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function addJournalEntry() {
+            const input = document.getElementById('journalInput');
+            const val = input.value.trim();
+            if (!val) return;
+
+            const saved = localStorage.getItem('lyra_dance_journal');
+            const entries = saved ? JSON.parse(saved) : [];
+            entries.unshift(val);
+            localStorage.setItem('lyra_dance_journal', JSON.stringify(entries));
+            input.value = '';
+            loadJournal();
+        }
+
+        function deleteJournalEntry(index) {
+            const saved = localStorage.getItem('lyra_dance_journal');
+            if (!saved) return;
+            const entries = JSON.parse(saved);
+            entries.splice(index, 1);
+            localStorage.setItem('lyra_dance_journal', JSON.stringify(entries));
+            loadJournal();
+        }
+
+        const oracleQuotes = [
+            "\"Dance is the secret poetry of the soul, effortless in movement and boundless in grace.\"",
+            "\"Under Tsaritsa's gaze, every frozen moment becomes a timeless step of mastery.\"",
+            "\"Like crystal blooms in Snezhnaya, your dedication shines radiant on stage.\"",
+            "\"Trust your rhythm. The music doesn't dictate your movement—your spirit guides the melody.\"",
+            "\"Elysian petals fall where passion leads. May your steps remain lightweight and fearless.\""
+        ];
+
+        function generateOracleQuote() {
+            const quoteElem = document.getElementById('oracleQuote');
+            const random = oracleQuotes[Math.floor(Math.random() * oracleQuotes.length)];
+            quoteElem.style.opacity = '0';
+            setTimeout(() => {
+                quoteElem.innerText = random;
+                quoteElem.style.opacity = '1';
+            }, 200);
+        }
+
+        function selectPresetTrack(index) {
+            currentTrackIndex = index;
+            const track = presetTracks[index];
+            document.getElementById('trackTitle').innerText = track.title;
+            document.getElementById('trackArtist').innerText = track.artist;
+            audioPlayer.src = track.url;
+            if (isAudioPlaying) {
+                audioPlayer.play();
+            }
+        }
+
+        function handleCustomAudioUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                audioPlayer.src = url;
+                document.getElementById('trackTitle').innerText = file.name.replace(/\.[^/.]+$/, "");
+                document.getElementById('trackArtist').innerText = "Local Upload";
+                audioPlayer.play();
+                isAudioPlaying = true;
+                updateAudioBtnUI();
+                initVisualizer();
+            }
+        }
+
+        function toggleAudioPlay() {
+            if (!audioPlayer.src) {
+                selectPresetTrack(0);
+            }
+
+            if (isAudioPlaying) {
+                audioPlayer.pause();
+                isAudioPlaying = false;
+            } else {
+                audioPlayer.play().then(() => {
+                    isAudioPlaying = true;
+                    initVisualizer();
+                }).catch(() => { });
+            }
+            updateAudioBtnUI();
+        }
+
+        function changeVolume(val) {
+            audioPlayer.volume = parseFloat(val);
+        }
+
+        function updateAudioBtnUI() {
+            document.getElementById('playAudioIcon').innerText = isAudioPlaying ? '⏸' : '▶';
+            document.getElementById('playAudioLabel').innerText = isAudioPlaying ? 'Pause Music' : 'Play Music';
+        }
+
+        function initVisualizer() {
+            const canvas = document.getElementById('visualizerCanvas');
+            const vCtx = canvas.getContext('2d');
+            document.getElementById('visualizerPlaceholder').classList.add('hidden');
+
+            if (!audioSourceNode) {
+                try {
+                    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioCtx.createAnalyser();
+                    analyser.fftSize = 64;
+                    audioSourceNode = audioCtx.createMediaElementSource(audioPlayer);
+                    audioSourceNode.connect(analyser);
+                    analyser.connect(audioCtx.destination);
+                } catch (e) { }
+            }
+
+            function renderVisualizer() {
+                if (!analyser) return;
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                analyser.getByteFrequencyData(dataArray);
+
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+
+                vCtx.clearRect(0, 0, canvas.width, canvas.height);
+                const barWidth = (canvas.width / bufferLength) * 1.5;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const barHeight = (dataArray[i] / 255) * canvas.height;
+                    vCtx.fillStyle = currentTheme === 'tsaritsa' ? '#8ce1ff' : '#ffb3de';
+                    vCtx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
+                    x += barWidth;
+                }
+
+                if (isAudioPlaying) {
+                    visualizerAnimFrame = requestAnimationFrame(renderVisualizer);
+                }
+            }
+            renderVisualizer();
+        }
+
+        function openLetterModal() {
+            const modal = document.getElementById('letterModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        }
+
+        function closeLetterModal() {
+            const modal = document.getElementById('letterModal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function toggleBgModal() {
+            const modal = document.getElementById('bgModal');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            } else {
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+
+        function setCustomBg(type) {
+            if (type === 'default') {
+                document.body.style.backgroundImage = 'none';
+            } else if (type === 'aurora') {
+                document.body.style.backgroundImage = 'radial-gradient(circle at 20% 20%, #0d3b66 0%, #000814 100%)';
+            } else if (type === 'sakura') {
+                document.body.style.backgroundImage = 'radial-gradient(circle at 80% 20%, #590d22 0%, #0f0206 100%)';
+            }
+            toggleBgModal();
+        }
+
+        function applyCustomBgUrl() {
+            const url = document.getElementById('bgUrlInput').value.trim();
+            if (url) {
+                document.body.style.backgroundImage = `url('${url}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+            }
+            toggleBgModal();
+        }
+
+        window.onload = function () {
+            updateTimerDisplay();
+            loadJournal();
+            selectPresetTrack(0);
+        };
+    </script>
+</body>
+
+</html>
